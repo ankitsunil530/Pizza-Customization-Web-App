@@ -1,43 +1,156 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-import PublicLayout from "./layouts/PublicLayout";
-import UserLayout from "./layouts/UserLayout";
-import AdminLayout from "./layouts/AdminLayout";
+// Layouts
+import Layout from "./layouts/PublicLayout";
+import AdminLayout from "./admin/pages/AdminLayout";
+
+// Public pages
 import HomePage from "./components/pages/HomePage";
+import PizzaDetails from "./components/pages/PizzaDetails";
+
+// Auth pages
 import Login from "./components/pages/Login";
-import Register from "./components/pages/SignUp";
-import PizzaStore from "./pizzastore/PizzaStore";
-import Cart from "./pizzastore/Cart";
-import Orders from "./pizzastore/Orders";
+import Register from "./components/pages/Register";
+
+// User pages
+import UserDashboard from "./user/pages/UserDashboard";
+import Cart from "./components/pages/Cart";
+import Checkout from "./components/pages/Checkout";
+import Orders from "./components/pages/Orders";
+import OrderDetails from "./user/pages/OrderDetails";
+import Profile from "./user/pages/Profile";
+import AddressBook from "./user/pages/AddressBook";
+import Wishlist from "./user/pages/Wishlist";
+import Notifications from "./user/pages/Notifications";
+
+// Admin pages
+import AdminDashboard from "./admin/pages/AdminDashboard";
+import ManagePizzas from "./admin/pages/ManagePizzas";
+import ManageToppings from "./admin/pages/ManageToppings";
+import ManageOrders from "./admin/pages/ManageOrders";
+import ManageUsers from "./admin/pages/ManageUsers";
+
+// Auth guard
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
+  const { user } = useSelector((state) => state.auth);
+
   return (
-    <BrowserRouter>
-      <Routes>
+    <Routes>
 
-        {/* Public */}
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Route>
+      {/* ================= PUBLIC LAYOUT ================= */}
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path="pizza/:id" element={<PizzaDetails />} />
 
-        {/* User */}
-        <Route element={<UserLayout />}>
-          <Route path="/pizzastore" element={<PizzaStore />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/orders" element={<Orders />} />
-        </Route>
+        {/* User shopping flow */}
+        <Route path="cart" element={
+          <ProtectedRoute role="user">
+            <Cart />
+          </ProtectedRoute>
+        }/>
 
-        {/* Admin */}
-        {/* <Route element={<AdminLayout />}>
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-          <Route path="/admin/inventory" element={<Inventory />} />
-        </Route> */}
+        <Route path="checkout" element={
+          <ProtectedRoute role="user">
+            <Checkout />
+          </ProtectedRoute>
+        }/>
 
-      </Routes>
-    </BrowserRouter>
+        <Route path="orders" element={
+          <ProtectedRoute role="user">
+            <Orders />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="orders/:id" element={
+          <ProtectedRoute role="user">
+            <OrderDetails />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="profile" element={
+          <ProtectedRoute role="user">
+            <Profile />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="addresses" element={
+          <ProtectedRoute role="user">
+            <AddressBook />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="wishlist" element={
+          <ProtectedRoute role="user">
+            <Wishlist />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="notifications" element={
+          <ProtectedRoute role="user">
+            <Notifications />
+          </ProtectedRoute>
+        }/>
+      </Route>
+
+      {/* ================= AUTH ROUTES ================= */}
+      <Route
+        path="/login"
+        element={
+          user
+            ? <Navigate to={user.role === "admin" ? "/admin/dashboard" : "/dashboard"} />
+            : <Login />
+        }
+      />
+
+      <Route
+        path="/register"
+        element={
+          user
+            ? <Navigate to={user.role === "admin" ? "/admin/dashboard" : "/dashboard"} />
+            : <Register />
+        }
+      />
+
+      {/* ================= USER DASHBOARD ================= */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute role="user">
+            <UserDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= ADMIN SECTION (WITH LAYOUT) ================= */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute role="admin">
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="pizzas" element={<ManagePizzas />} />
+        <Route path="toppings" element={<ManageToppings />} />
+        <Route path="orders" element={<ManageOrders />} />
+        <Route path="users" element={<ManageUsers />} />
+      </Route>
+
+      {/* ================= FALLBACK ================= */}
+      <Route
+        path="*"
+        element={
+          user
+            ? <Navigate to={user.role === "admin" ? "/admin/dashboard" : "/dashboard"} />
+            : <Navigate to="/" />
+        }
+      />
+
+    </Routes>
   );
 }
 

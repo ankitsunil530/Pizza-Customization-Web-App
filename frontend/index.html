@@ -1,13 +1,44 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+
+  <!-- App Icon -->
+  <link rel="icon" type="image/png" href="/pizza-favicon.png" />
+
+  <!-- Mobile Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+  <!-- SEO -->
+  <title>PizzaApp – Customize & Order Fresh Pizza Online</title>
+  <meta name="description" content="Order delicious customizable pizzas online. Choose size, crust, toppings and get fast delivery. Secure payments with Razorpay." />
+  <meta name="keywords" content="pizza online order, custom pizza, food delivery, razorpay payment, ecommerce pizza" />
+  <meta name="author" content="PizzaApp Team" />
+
+  <!-- Open Graph (Social sharing) -->
+  <meta property="og:title" content="PizzaApp – Order Custom Pizza Online" />
+  <meta property="og:description" content="Build your dream pizza with fresh toppings and quick delivery." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/social-preview.png" />
+
+  <!-- Performance -->
+  <link rel="preconnect" href="https://checkout.razorpay.com" />
+  <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
+
+  <!-- Razorpay -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+
+</head>
+<body class="bg-gray-900">
+
+  <noscript>
+    <strong>JavaScript is required to run PizzaApp.</strong>
+  </noscript>
+
+  <div id="root"></div>
+
+  <!-- React entry -->
+  <script type="module" src="/src/main.jsx"></script>
+
+</body>
 </html>
