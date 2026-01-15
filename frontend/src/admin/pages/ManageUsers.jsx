@@ -14,7 +14,7 @@ export default function ManageUsers() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/user/users", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/user/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(res.data.data);
@@ -33,7 +33,7 @@ export default function ManageUsers() {
     if (!window.confirm("Delete this user permanently?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/user/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/user/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       loadUsers();

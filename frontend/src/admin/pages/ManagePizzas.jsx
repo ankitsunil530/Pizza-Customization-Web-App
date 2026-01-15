@@ -19,7 +19,7 @@ export default function ManagePizzas() {
   const [loading, setLoading] = useState(false);
 
   const fetchPizzas = async () => {
-    const res = await axios.get("http://localhost:5000/api/pizzas");
+    const res = await axios.get(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/pizzas`);
     setPizzas(res.data.data);
   };
 
@@ -55,7 +55,7 @@ export default function ManagePizzas() {
       setLoading(true);
 
       await axios.post(
-        "http://localhost:5000/api/pizzas",
+        `${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/pizzas`,
         {
           name,
           description,
@@ -89,7 +89,7 @@ export default function ManagePizzas() {
   const deletePizza = async (id) => {
     if (!window.confirm("Delete pizza?")) return;
 
-    await axios.delete(`http://localhost:5000/api/pizzas/${id}`, {
+    await axios.delete(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/pizzas/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

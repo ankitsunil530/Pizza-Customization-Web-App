@@ -38,7 +38,7 @@ function Checkout() {
 
       // Create order
       const orderRes = await axios.post(
-        "http://localhost:5000/api/orders",
+        `${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/orders`,
         { address },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -47,7 +47,7 @@ function Checkout() {
 
       // Create Razorpay order
       const paymentRes = await axios.post(
-        "http://localhost:5000/api/payment/create-order",
+        `${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/payment/create-order`,
         { orderId },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -64,7 +64,7 @@ function Checkout() {
 
         handler: async function (response) {
           await axios.post(
-            "http://localhost:5000/api/payment/verify",
+            `${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/payment/verify`,
             { ...response, orderId },
             { headers: { Authorization: `Bearer ${user.token}` } }
           );

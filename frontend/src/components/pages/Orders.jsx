@@ -13,7 +13,7 @@ function Orders() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/orders/my", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/orders/my`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       setOrders(res.data.data);
@@ -36,7 +36,7 @@ function Orders() {
     try {
       // 1️⃣ Create Razorpay order for existing order
       const paymentRes = await axios.post(
-        "http://localhost:5000/api/payment/pay-existing-order",
+        `${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/payment/pay-existing-order`,
         { orderId },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -55,7 +55,7 @@ function Orders() {
         handler: async function (response) {
           // 3️⃣ Verify payment
           await axios.post(
-            "http://localhost:5000/api/payment/verify",
+            `${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/payment/verify`,
             { ...response, orderId },
             { headers: { Authorization: `Bearer ${user.token}` } }
           );

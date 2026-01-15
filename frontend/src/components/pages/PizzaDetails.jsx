@@ -25,7 +25,7 @@ function PizzaDetails() {
         const pizzaData = await fetchPizzaById(id);
         setPizza(pizzaData);
 
-        const toppingRes = await axios.get("http://localhost:5000/api/toppings");
+        const toppingRes = await axios.get(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/toppings`);
         setToppings(toppingRes.data.data);
       } catch {
         alert("Failed to load pizza data");

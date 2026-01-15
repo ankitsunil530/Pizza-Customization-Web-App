@@ -15,7 +15,7 @@ export default function ManageToppings() {
 
   const fetchToppings = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/toppings");
+      const res = await axios.get(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/toppings`);
       setToppings(res.data.data);
     } catch (err) {
       setError("Failed to load toppings");
@@ -36,7 +36,7 @@ export default function ManageToppings() {
       setLoading(true);
 
       await axios.post(
-        "http://localhost:5000/api/toppings",
+        `${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/toppings`,
         { name, price },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -57,7 +57,7 @@ export default function ManageToppings() {
     if (!window.confirm("Delete this topping?")) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/toppings/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/toppings/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

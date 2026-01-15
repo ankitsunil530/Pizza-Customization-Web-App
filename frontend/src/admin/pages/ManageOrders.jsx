@@ -13,7 +13,7 @@ export default function ManageOrders() {
   const loadOrders = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/orders", {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/orders`    , {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data.data);
@@ -31,7 +31,7 @@ export default function ManageOrders() {
   const updateStatus = async (id, status) => {
     try {
       await axios.put(
-        `http://localhost:5000/api/orders/${id}`,
+        `${import.meta.env.VITE_API_URL||"http://localhost:5000/api"}/orders/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
