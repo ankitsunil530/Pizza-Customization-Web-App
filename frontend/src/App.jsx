@@ -30,6 +30,7 @@ import ManagePizzas from "./admin/pages/ManagePizzas";
 import ManageToppings from "./admin/pages/ManageToppings";
 import ManageOrders from "./admin/pages/ManageOrders";
 import ManageUsers from "./admin/pages/ManageUsers";
+import ManageCoupons from "./admin/pages/ManageCoupons";
 
 // Auth guard
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -138,6 +139,7 @@ function App() {
         <Route path="toppings" element={<ManageToppings />} />
         <Route path="orders" element={<ManageOrders />} />
         <Route path="users" element={<ManageUsers />} />
+        <Route path="coupons" element={<ManageCoupons />} />
       </Route>
 
       {/* ================= FALLBACK ================= */}
