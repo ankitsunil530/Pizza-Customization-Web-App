@@ -11,6 +11,11 @@ function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCode, setAppliedCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -21,7 +26,34 @@ function Checkout() {
   const items = useMemo(() => cart?.items || [], [cart]);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
   const deliveryFee = subtotal > 499 || subtotal === 0 ? 0 : 40;
-  const total = subtotal + deliveryFee;
+  const total = Math.max(0, subtotal - discount) + deliveryFee;
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    try {
+      setCouponLoading(true);
+      setCouponError("");
+      const res = await api.post("/coupons/validate", {
+        code: couponCode.trim(),
+        subtotal,
+      });
+      setDiscount(res.data.data.discount);
+      setAppliedCode(res.data.data.code);
+    } catch (err) {
+      setDiscount(0);
+      setAppliedCode("");
+      setCouponError(err.response?.data?.error || "Invalid coupon code.");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setDiscount(0);
+    setAppliedCode("");
+    setCouponCode("");
+    setCouponError("");
+  };
 
   useEffect(() => {
     if (!user) navigate("/login");
@@ -34,6 +66,7 @@ function Checkout() {
       phone,
       paymentMethod,
       deliveryFee,
+      couponCode: appliedCode || undefined,
     });
     return res.data.data;
   };
@@ -103,7 +136,7 @@ function Checkout() {
   return (
     <main className="min-h-screen bg-[#080411] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
-        <Link to="/cart" className="text-sm font-semibold text-orange-200 hover:text-orange-100">← Back to cart</Link>
+        <Link to="/cart" className="text-sm font-semibold text-orange-200 hover:text-orange-100">{"\u2190"} Back to cart</Link>
         <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_24rem]">
           <section className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 shadow-2xl shadow-black/20 md:p-8">
             <p className="text-sm font-bold uppercase tracking-[0.35em] text-orange-300">Checkout</p>
@@ -132,6 +165,44 @@ function Checkout() {
                   value={address}
                   onChange={(event) => setAddress(event.target.value)}
                 />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-slate-200" htmlFor="coupon">Coupon code</label>
+                {appliedCode ? (
+                  <div className="flex items-center justify-between rounded-2xl border border-green-400/30 bg-green-500/10 px-5 py-4">
+                    <span className="text-sm font-semibold text-green-100">
+                      {appliedCode} applied
+                    </span>
+                    <button
+                      type="button"
+                      onClick={removeCoupon}
+                      className="text-sm font-semibold text-orange-200 hover:text-orange-100"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-3">
+                    <input
+                      id="coupon"
+                      type="text"
+                      value={couponCode}
+                      onChange={(event) => setCouponCode(event.target.value.toUpperCase())}
+                      placeholder="SAVE20"
+                      className="w-full rounded-2xl border border-white/10 bg-black/30 px-5 py-4 text-white outline-none ring-orange-400/40 placeholder:text-slate-500 focus:ring-4"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={couponLoading}
+                      className="shrink-0 rounded-2xl border border-white/10 bg-white/[0.08] px-5 py-4 font-bold transition hover:bg-white/[0.14] disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {couponLoading ? "Applying..." : "Apply"}
+                    </button>
+                  </div>
+                )}
+                {couponError && <p className="mt-2 text-sm text-red-300">{couponError}</p>}
               </div>
 
               <div>
@@ -170,7 +241,7 @@ function Checkout() {
             <div className="mt-5 space-y-4">
               {items.map((item) => (
                 <div key={item._id} className="flex justify-between gap-4 text-sm text-slate-300">
-                  <span>{item.name} × {item.qty}</span>
+                  <span>{item.name} {"\u00d7"} {item.qty}</span>
                   <span>{formatCurrency(item.price * item.qty)}</span>
                 </div>
               ))}
@@ -178,9 +249,12 @@ function Checkout() {
             <div className="mt-6 space-y-4 border-t border-white/10 pt-5 text-slate-300">
               <div className="flex justify-between"><span>Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
               <div className="flex justify-between"><span>Delivery</span><span>{deliveryFee ? formatCurrency(deliveryFee) : "Free"}</span></div>
+              {discount > 0 && (
+                <div className="flex justify-between text-green-300"><span>Discount{appliedCode ? ` (${appliedCode})` : ""}</span><span>-{formatCurrency(discount)}</span></div>
+              )}
               <div className="flex justify-between text-2xl font-black text-white"><span>Total</span><span>{formatCurrency(total)}</span></div>
             </div>
-            <p className="mt-5 text-xs leading-6 text-slate-400">🔒 Online payments are verified server-side. COD orders are immediately sent to the kitchen.</p>
+            <p className="mt-5 text-xs leading-6 text-slate-400">{"\uD83D\uDD12"} Online payments are verified server-side. COD orders are immediately sent to the kitchen.</p>
           </aside>
         </div>
       </div>

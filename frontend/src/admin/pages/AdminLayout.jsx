@@ -25,16 +25,17 @@ export default function AdminLayout() {
 
       <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r border-white/10 bg-black/30 p-5 shadow-2xl shadow-black/30 backdrop-blur-xl lg:flex">
         <Link to="/admin/dashboard" className="mb-8 flex items-center gap-3 text-xl font-black">
-          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-red-500 to-orange-400 text-2xl">🍕</span>
+          <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-red-500 to-orange-400 text-2xl">{"\uD83C\uDF55"}</span>
           <span>PizzaCraft Pro</span>
         </Link>
 
         <nav className="space-y-2">
-          <NavLink to="/admin/dashboard" className={linkClass}>📊 Dashboard</NavLink>
-          <NavLink to="/admin/orders" className={linkClass}>📦 Orders</NavLink>
-          <NavLink to="/admin/pizzas" className={linkClass}>🍕 Pizzas</NavLink>
-          <NavLink to="/admin/toppings" className={linkClass}>🧀 Toppings</NavLink>
-          <NavLink to="/admin/users" className={linkClass}>👥 Users</NavLink>
+          <NavLink to="/admin/dashboard" className={linkClass}>{"\uD83D\uDCCA"} Dashboard</NavLink>
+          <NavLink to="/admin/orders" className={linkClass}>{"\uD83D\uDCE6"} Orders</NavLink>
+          <NavLink to="/admin/pizzas" className={linkClass}>{"\uD83C\uDF55"} Pizzas</NavLink>
+          <NavLink to="/admin/toppings" className={linkClass}>{"\uD83E\uDDC0"} Toppings</NavLink>
+          <NavLink to="/admin/users" className={linkClass}>{"\uD83D\uDC65"} Users</NavLink>
+          <NavLink to="/admin/coupons" className={linkClass}>{"\uD83C\uDFAB"} Coupons</NavLink>
         </nav>
 
         <div className="mt-auto rounded-3xl border border-white/10 bg-white/[0.06] p-4">
@@ -49,7 +50,7 @@ export default function AdminLayout() {
 
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080411]/90 px-4 py-4 backdrop-blur-xl lg:hidden">
         <div className="flex items-center justify-between">
-          <Link to="/admin/dashboard" className="font-black">🍕 PizzaCraft Pro</Link>
+          <Link to="/admin/dashboard" className="font-black">{"\uD83C\uDF55"} PizzaCraft Pro</Link>
           <button onClick={handleLogout} className="rounded-full bg-red-500/20 px-4 py-2 text-sm font-bold text-red-100">Logout</button>
         </div>
         <nav className="mt-4 flex gap-2 overflow-x-auto pb-1">
@@ -58,6 +59,7 @@ export default function AdminLayout() {
           <NavLink to="/admin/pizzas" className={linkClass}>Pizzas</NavLink>
           <NavLink to="/admin/toppings" className={linkClass}>Toppings</NavLink>
           <NavLink to="/admin/users" className={linkClass}>Users</NavLink>
+          <NavLink to="/admin/coupons" className={linkClass}>Coupons</NavLink>
         </nav>
       </header>
 
