@@ -37,17 +37,7 @@ export const createOrder = async (req, res) => {
       const coupon = await Coupon.findOne({
         code: String(couponCode).trim().toUpperCase(),
       });
-      if (!coupon) {
-        return res.status(400).json({ error: "Coupon not found" });
-      }
-
-      const userUsageCount = await Order.countDocuments({
-        user: req.user._id,
-        couponCode: coupon.code,
-        orderStatus: { $ne: "cancelled" }
-      });
-
-      const result = evaluateCoupon(coupon, subtotal, userUsageCount);
+      const result = evaluateCoupon(coupon, subtotal);
       if (!result.ok) {
         return res.status(400).json({ error: result.reason });
       }
