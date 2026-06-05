@@ -37,22 +37,32 @@ export const createOrder = async (req, res) => {
       const coupon = await Coupon.findOne({
         code: String(couponCode).trim().toUpperCase(),
       });
+      if (!coupon) {
+        return res.status(400).json({ error: "Coupon not found" });
+      }
 
-      // First run the shared engine: it validates active/expiry/min-order and
-      // computes the authoritative discount. (It also does an early usage-limit
-      // read, but that read is not the enforcement point -- see the atomic
-      // claim below.)
-      const result = evaluateCoupon(coupon, subtotal);
+      // Count how many times this user has already redeemed this coupon across
+      // non-cancelled orders (feeds the per-user limit check in evaluateCoupon).
+      const userUsageCount = await Order.countDocuments({
+        user: req.user._id,
+        couponCode: coupon.code,
+        orderStatus: { $ne: "cancelled" }
+      });
+
+      // Run the shared engine: validates active/expiry/min-order/per-user limit
+      // and computes the authoritative discount. The global usageLimit read here
+      // is an early-exit optimisation only -- the authoritative cap enforcement
+      // is the atomic claim below.
+      const result = evaluateCoupon(coupon, subtotal, userUsageCount);
       if (!result.ok) {
         return res.status(400).json({ error: result.reason });
       }
 
-      // Atomically claim one redemption slot. The global usageLimit is enforced
-      // here in a single conditional update, so two orders placed concurrently
-      // can never both take the last remaining slot. This closes the TOCTOU
-      // race that the previous read-then-save() increment allowed (same bug
-      // class as the payment-order binding race fixed in #22). usageLimit === 0
-      // means unlimited, so those coupons always pass the filter.
+      // Atomically claim one global redemption slot. MongoDB applies a single-
+      // document findOneAndUpdate atomically, so two concurrent orders can never
+      // both take the last remaining slot -- closing the TOCTOU race that the
+      // previous read-then-save() increment allowed (same class as #22).
+      // usageLimit === 0 means unlimited; those coupons always pass the filter.
       const claimed = await Coupon.findOneAndUpdate(
         {
           _id: coupon._id,
@@ -96,8 +106,8 @@ export const createOrder = async (req, res) => {
     } catch (orderErr) {
       // The order failed to persist after we claimed a redemption slot, so
       // release that slot to keep usedCount honest -- a failed order must not
-      // burn a coupon use. Best-effort: never let a rollback failure mask the
-      // original error.
+      // burn a coupon use. Best-effort: a rollback failure must never mask the
+      // original order error.
       if (appliedCoupon) {
         try {
           await Coupon.updateOne(
