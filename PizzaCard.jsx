@@ -3,7 +3,7 @@ import { formatCurrency } from "../utils/money";
 
 const FALLBACK_IMAGES = {
   "Margherita": "https://cdn.uengage.io/uploads/5/image-342266-1715596630.png",
-  "Margherita ": "https://www.foodandwine.com/thmb/7A7CYdDEKJUUhNcLSrlZ5N8wbHo=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/mozzarella-pizza-margherita-FT-RECIPE0621-11fa41ceb1a5465d9036a23da87dd3d4.jpg",
+  "Margherita Classic": "https://cdn.uengage.io/uploads/5/image-342266-1715596630.png",
   "Veg Supreme": "https://pforpizza.in/wp-content/uploads/2023/12/IMG-20231216-WA0018.jpg",
   "Margherita Supreme": "https://allforpizza.com/wp-content/uploads/2022/07/1460A7EC-CF3B-40E8-B05F-A21E12E85EC6.jpeg",
 };
