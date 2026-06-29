@@ -50,6 +50,7 @@ const allowedOrigins = isDev
       "http://127.0.0.1:5173",
       "http://localhost:5000",
       "https://pizza-customization-web-app.vercel.app",
+      ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim()) : [])
     ]
   : process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
